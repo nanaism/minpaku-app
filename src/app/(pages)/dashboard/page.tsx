@@ -1,30 +1,23 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  getUserReservations,
+  UserReservationDetails,
+} from "@/lib/supabase/database/reservations";
+import { parseDateRange } from "@/lib/supabase/utils/date-range-parser";
 import { currentUser } from "@clerk/nextjs/server";
 import { format } from "date-fns";
-import { Plus } from "lucide-react";
+import { Calendar, Plus } from "lucide-react";
 import Link from "next/link";
 import EmptyReservations from "./_components/empty-reservations";
 import ReservationCard from "./_components/reservation-card";
 
-type UserReservationDetails = {
-  created_at: string | null;
-  duration: unknown;
-  guest_count: number;
-  id: string;
-  listing_id: string;
-  total_price: number;
-  user_id: string;
-  listings: {
-    id: string;
-    user_id: string;
-    location_value: string;
-    price: number;
-    title: string;
-    listing_images: { url: string }[];
-  };
-};
+// 終了日の取得
+function getEndDateFromDuration(durationStr: string | null): Date | null {
+  const { endDate } = parseDateRange(durationStr);
+  return endDate;
+}
 
 export default async function UserDashboardPage() {
   const user = await currentUser();
@@ -38,28 +31,24 @@ export default async function UserDashboardPage() {
     );
   }
 
-  // ダミーデータ（後でデータベースからの取得に置き換え）
-  const upcomingReservations: UserReservationDetails[] = [
-    {
-      id: "1",
-      listing_id: "listing1",
-      user_id: "user_dummy_1",
-      created_at: "2025-05-01T00:00:00.000Z",
-      duration: "2025-06-05T00:00:00.000Z/2025-06-11T00:00:00.000Z",
-      guest_count: 4,
-      total_price: 40000,
-      listings: {
-        user_id: "user_dummy_2",
-        id: "listing1",
-        title: "京都の風情ある町家一棟貸し",
-        location_value: "京都市東山区",
-        price: 18500,
-        listing_images: [{ url: "/kyoto.jpg" }],
-      },
-    },
-  ];
+  // 予約一覧のデータを構築
+  let allReservations: UserReservationDetails[] = [];
+  try {
+    allReservations = await getUserReservations(user.id);
+  } catch (error) {
+    console.error("Failed to fetch reservations:", error);
+  }
 
-  const pastReservations: UserReservationDetails[] = [];
+  // 将来の予約と過去の予約に分類
+  const now = new Date();
+  const upcomingReservations = allReservations.filter((res) => {
+    const endDate = getEndDateFromDuration(res.duration as string | null);
+    return endDate ? endDate >= now : false;
+  });
+  const pastReservations = allReservations.filter((res) => {
+    const endDate = getEndDateFromDuration(res.duration as string | null);
+    return endDate ? endDate < now : true;
+  });
 
   // ユーザーのプロフィール情報
   const userProfile = {
@@ -67,7 +56,7 @@ export default async function UserDashboardPage() {
     email: user.emailAddresses[0].emailAddress ?? "メールアドレス不明",
     avatar: user.imageUrl ?? "/user1.jpg",
     joinDate: user.createdAt
-      ? format(new Date(user.createdAt), "yyyy年M月")
+      ? format(new Date(user.createdAt), "yyyy年M月") + "に参加"
       : "参加日不明",
   };
 
@@ -105,6 +94,7 @@ export default async function UserDashboardPage() {
 
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-600">
                 <div className="flex items-center">
+                  <Calendar className="mr-1 h-4 w-4" />
                   {userProfile.joinDate}に参加
                 </div>
               </div>
@@ -113,7 +103,7 @@ export default async function UserDashboardPage() {
         </div>
       </section>
 
-      {/* メインコンテンツ  */}
+      {/* メインコンテンツ */}
       <section className="py-12">
         <div className="container mx-auto px-4 md:px-6">
           <Tabs defaultValue="upcoming">
