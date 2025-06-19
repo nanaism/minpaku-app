@@ -42,7 +42,7 @@ export default function Home() {
                   <br />
                   <span className="">思い出を作る</span>
                   <br />
-                  特別な宿泊体験
+                  特別な民泊体験
                 </h1>
                 <p className="max-w-[600px] text-lg text-slate-600">
                   地元の魅力を発見。個性的な宿泊先を予約。

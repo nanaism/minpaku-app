@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+import Header from "@/components/header";
+import { ClerkProvider } from "@clerk/nextjs";
+import { type Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "民泊アプリ",
+  title: "Yadori - 民泊アプリ",
   description: "地元の魅力を発見し、個性的な宿泊体験を楽しもう",
 };
 
@@ -23,12 +25,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="ja">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Header />
+          {children}
+          <footer className="bg-gray-900 px-4 md:px-6 py-8">
+            <p className="text-sm text-slate-300 text-center">
+              created by @handle {new Date().getFullYear()}
+            </p>
+          </footer>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
