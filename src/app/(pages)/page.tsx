@@ -106,7 +106,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-16">
             <h2 className="text-5xl font-bold tracking-tight text-slate-900">
-              スペシャルな体験ができる、人気の宿。
+              自分だけの特別な場所へ。
             </h2>
           </div>
 
@@ -165,7 +165,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold tracking-tight text-slate-900 mb-4">
-              民泊アプリ の使い方は簡単です。
+              民泊アプリ の使い方は簡単です
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-slate-600">
               宿泊したい方も、ホストになりたい方も、簡単3ステップで始められます
