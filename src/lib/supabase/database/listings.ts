@@ -17,6 +17,52 @@ type Listing = Tables<"listings">;
 type ListingImage = Tables<"listing_images">;
 
 /**
+ * トップページに表示する特集リスティング用の型
+ * リスティング情報に画像配列を含む
+ */
+export type ListingWithImages = Listing & {
+  listing_images: ListingImage[];
+};
+
+// ... getFeaturedListings 関数の内部 ...
+
+export const getFeaturedListings = async (
+  limit: number = 4
+): Promise<ListingWithImages[]> => {
+  const supabase = await createServerClient();
+
+  // ▼▼▼ 代替案の修正箇所 ▼▼▼
+  const { data, error } = await supabase
+    .from("listings")
+    // まずlisting_imagesを全て取得。ソートはここで行わない
+    .select("*, listing_images(*)")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  // ▲▲▲ 修正ここまで ▲▲▲
+
+  if (error) {
+    console.error("Error fetching featured listings:", error);
+    throw new Error(`Error fetching featured listings: ${error.message}`);
+  }
+
+  // SupabaseのJOINでは、関連データがない場合にnullになる可能性があるため、
+  // listing_imagesが常に配列であることを保証する
+  const listingsWithEnsuredImages = data.map((item) => {
+    // ▼▼▼ ここでJavaScript側でソートする ▼▼▼
+    const sortedImages = item.listing_images
+      ? [...item.listing_images].sort((a, b) => a.order - b.order)
+      : [];
+    return {
+      ...item,
+      listing_images: sortedImages,
+    };
+    // ▲▲▲ ソート処理ここまで ▲▲▲
+  });
+
+  return listingsWithEnsuredImages as ListingWithImages[];
+};
+
+/**
  * 条件付きでリスティングの一覧を取得する
  *
  * オプションのフィルタパラメータを使用して、条件に合うリスティングを
@@ -25,6 +71,20 @@ type ListingImage = Tables<"listing_images">;
  *
  * @param params フィルタリング条件（ユーザーID、カテゴリ、場所など）
  * @returns リスティングオブジェクトの配列
+ */
+// ... 既存のコード ...
+
+// getListings 関数をまるごと以下に置き換えてください
+
+/**
+ * 条件付きでリスティングの一覧を画像付きで取得する
+ *
+ * オプションのフィルタパラメータを使用して、条件に合うリスティングを
+ * データベースから画像情報とともに取得します。フィルタが指定されない場合はすべての
+ * リスティングを返します。
+ *
+ * @param params フィルタリング条件（ユーザーID、カテゴリ、場所など）
+ * @returns 画像情報を含むリスティングオブジェクトの配列
  */
 export const getListings = async (params?: {
   userId?: string;
@@ -37,12 +97,14 @@ export const getListings = async (params?: {
 }) => {
   const supabase = await createServerClient();
 
+  // ▼▼▼ 修正点: select句から order() を削除 ▼▼▼
   let query = supabase
     .from("listings")
-    .select("*")
+    .select("*, listing_images(*)") // ソートはJS側で行うため、シンプルに全画像を取得
     .order("created_at", { ascending: false });
+  // ▲▲▲ 修正ここまで ▲▲▲
 
-  // フィルタが提供されている場合は適用
+  // フィルタが提供されている場合は適用 (変更なし)
   if (params) {
     if (params.userId) {
       query = query.eq("user_id", params.userId);
@@ -71,10 +133,25 @@ export const getListings = async (params?: {
 
   if (error) {
     console.error("Error fetching listings:", error);
-    throw new Error(`Error fetching listings: ${error.message}`);
+    throw new Error(error.message);
   }
 
-  return data as Listing[];
+  // ▼▼▼ 修正点: 取得後にJSでソート処理を追加 ▼▼▼
+  const listingsWithSortedImages = data.map((item) => {
+    // 画像が存在する場合のみソートを実行
+    const sortedImages = item.listing_images
+      ? [...item.listing_images].sort((a, b) => a.order - b.order)
+      : [];
+
+    return {
+      ...item,
+      listing_images: sortedImages,
+    };
+  });
+  // ▲▲▲ 修正ここまで ▲▲▲
+
+  // ListingWithImages型を再利用
+  return listingsWithSortedImages as ListingWithImages[];
 };
 
 /**

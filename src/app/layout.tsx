@@ -34,7 +34,7 @@ export default function RootLayout({
           {children}
           <footer className="bg-gray-900 px-4 md:px-6 py-8">
             <p className="text-sm text-slate-300 text-center">
-              created by @handle {new Date().getFullYear()}
+              created by @oga_aiichiro {new Date().getFullYear()}
             </p>
           </footer>
         </body>

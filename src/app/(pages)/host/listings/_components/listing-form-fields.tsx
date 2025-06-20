@@ -165,7 +165,7 @@ export function ListingFormFields({
               {...register("price", { valueAsNumber: true })}
               min="0"
               className="border-gray-300 w-1/3 focus:border-emerald-500 focus:ring-emerald-500"
-              placeholder="10000"
+              placeholder="1000"
               aria-invalid={errors.price ? "true" : "false"}
               aria-describedby="price-error"
             />

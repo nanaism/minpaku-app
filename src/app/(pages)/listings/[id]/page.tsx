@@ -15,31 +15,33 @@ import BookingCalendar from "./_components/booking-calendar";
 import ListingDetails from "./_components/listing-details";
 import ListingImageGallery from "./_components/listing-image-gallery";
 
+// ▼▼▼ ステップ1で作成したコンポーネントをインポート ▼▼▼
+import { BookingFailure } from "./_components/booking-failure";
+import { BookingSuccess } from "./_components/booking-success";
+
+export const dynamic = "force-dynamic";
+
 interface ListingDetailPageProps {
-  params: Promise<{
-    id: string;
-  }>;
+  // ▼▼▼ 引数の型定義を修正 ▼▼▼
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-/**
- * 物件の詳細情報、画像ギャラリー、予約機能を提供するページコンポーネント。
- * Supabaseから取得した物件データとその予約状況を表示します。
- */
 export default async function ListingDetailPage({
   params,
+  searchParams, // searchParams を受け取る
 }: ListingDetailPageProps) {
-  const { id } = await params;
+  // ▲▲▲ 引数の型定義を修正 ▲▲▲
+  const { id } = params; // paramsのPromiseを解決する必要がなくなる
 
   const { listing, images } = await getListingById(id);
   if (!listing) {
     notFound();
   }
 
-  // 予約カレンダーの表示範囲（今日から2ヶ月間）を設定
   const today = new Date();
   const twoMonthsLater = addMonths(today, 2);
 
-  // 指定した期間内の予約情報を取得
   const reservationsData: ReservationDateRange[] | null =
     await getReservationsForListingInRange(id, today, twoMonthsLater);
 
@@ -47,7 +49,7 @@ export default async function ListingDetailPage({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section (変更なし) */}
       <section className="bg-gray-50 py-8 md:py-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
@@ -89,7 +91,9 @@ export default async function ListingDetailPage({
                     className="w-full bg-emerald-500 hover:bg-emerald-600 text-white"
                     size="lg"
                   >
-                    <Link href="#booking">
+                    <Link href="#booking-section">
+                      {" "}
+                      {/* booking-sectionへのアンカーリンクに修正 */}
                       <Calendar className="mr-2 h-4 w-4" aria-hidden="true" />
                       予約する
                     </Link>
@@ -107,7 +111,7 @@ export default async function ListingDetailPage({
       <section className="py-8" id="booking-section">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left Column: Listing Details */}
+            {/* Left Column: Listing Details (変更なし) */}
             <div className="flex-1">
               <div className="space-y-8">
                 <section aria-labelledby="description-section">
@@ -155,8 +159,29 @@ export default async function ListingDetailPage({
               </div>
             </div>
 
+            {/* Right Column: Booking Widget */}
             <div className="lg:w-96 flex-shrink-0">
-              <BookingCalendar listing={listing} reservations={reservations} />
+              {/* ▼▼▼ ここに表示切り替えロジックを追加 ▼▼▼ */}
+              <div className="sticky top-24">
+                {searchParams.status === "success" ? (
+                  <BookingSuccess />
+                ) : searchParams.status === "failure" ? (
+                  <BookingFailure
+                    listingId={id}
+                    errorMessage={
+                      typeof searchParams.message === "string"
+                        ? decodeURIComponent(searchParams.message)
+                        : "予期せぬエラーが発生しました。"
+                    }
+                  />
+                ) : (
+                  <BookingCalendar
+                    listing={listing}
+                    reservations={reservations}
+                  />
+                )}
+              </div>
+              {/* ▲▲▲ ここまで ▲▲▲ */}
             </div>
           </div>
         </div>

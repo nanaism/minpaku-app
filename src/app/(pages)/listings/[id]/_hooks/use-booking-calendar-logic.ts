@@ -68,7 +68,6 @@ export const useBookingCalendarLogic = ({
     trigger,
     watch,
     setValue,
-    reset,
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
     defaultValues: {
@@ -204,20 +203,25 @@ export const useBookingCalendarLogic = ({
 
     try {
       await createReservation(newReservation);
-      alert("予約が完了しました！ダッシュボードページにリダイレクトします！");
-      reset();
-      setBookingStep(1);
-      // 1.5秒後にダッシュボードページに遷移
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1500);
+
+      // ▼▼▼ ここを修正 ▼▼▼
+      // 成功した場合、新しい成功ページにリダイレクト
+      router.push(`/booking/success`);
+      // ▲▲▲ 修正ここまで ▲▲▲
     } catch (error: unknown) {
       console.error("予約作成エラー:", error);
+      let message = "不明なエラーが発生しました。";
       if (error instanceof Error) {
-        alert(`予約に失敗しました: ${error.message}`);
-      } else {
-        alert("予約に失敗しました。不明なエラーです。");
+        message = error.message;
       }
+
+      // ▼▼▼ ここも修正 ▼▼▼
+      const encodedMessage = encodeURIComponent(message);
+      // 失敗した場合、新しい失敗ページにリダイレクト。元のリスティングIDも渡す
+      router.push(
+        `/booking/failure?listingId=${listing.id}&message=${encodedMessage}`
+      );
+      // ▲▲▲ 修正ここまで ▲▲▲
     }
   };
 

@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { featuredListings } from "./_data/listings";
+// ▼▼▼ 変更点1: ダミーデータを削除し、データベースからデータを取得する関数をインポート ▼▼▼
+import { getFeaturedListings } from "@/lib/supabase/database/listings";
 
-// How it works セクションのステップを定義
+// How it works セクションのステップを定義（変更なし）
 const howItWorksSteps = [
   {
     id: 1,
@@ -28,10 +29,14 @@ const howItWorksSteps = [
   },
 ];
 
-export default function Home() {
+// ▼▼▼ 変更点2: コンポーネントを非同期（async）関数に変更し、データを取得 ▼▼▼
+export default async function Home() {
+  // データベースから特集リスティングを4件取得
+  const featuredListings = await getFeaturedListings(4);
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section (変更なし) */}
       <section className="relative bg-gray-50 py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid gap-8 md:grid-cols-2 md:gap-12">
@@ -50,8 +55,11 @@ export default function Home() {
                   ホストとつながり、新しい体験を楽しみましょう。
                 </p>
                 <div className="flex space-x-4">
-                  <Button className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm">
-                    今すぐ始める
+                  <Button
+                    asChild
+                    className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm"
+                  >
+                    <Link href="#get-started">今すぐ始める</Link>
                   </Button>
                   <Button
                     asChild
@@ -103,7 +111,7 @@ export default function Home() {
 
       {/* Featured Listings */}
       <section className="py-24 bg-white">
-        <div className="container mx-auto px-4 md:px-6">
+        <div className="container mx-auto px-4 md:px-6" id="get-started">
           <div className="mb-16">
             <h2 className="text-5xl font-bold tracking-tight text-slate-900">
               自分だけの特別な場所へ。
@@ -111,15 +119,19 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+            {/* ▼▼▼ 変更点3: データマッピング部分の微調整 ▼▼▼ */}
             {featuredListings.map((listing) => (
-              <div
+              // ▼▼▼ ここから変更 ▼▼▼
+              // カード全体をLinkコンポーネントで囲む
+              <Link
+                href={`/listings/${listing.id}`} // 動的なURLを生成
                 key={listing.id}
-                className="group rounded-xl overflow-hidden"
+                className="group block rounded-xl overflow-hidden" // aタグをブロック要素として扱うために `block` を追加
               >
                 <div className="aspect-video rounded-xl relative overflow-hidden transition-all hover:shadow-md">
                   <Image
                     fill
-                    src={listing.listing_images[0]?.url}
+                    src={listing.listing_images[0]?.url || "/shibuya.jpg"}
                     alt={listing.title}
                     className="h-full w-full object-cover border border-slate-100 transition-transform group-hover:scale-105"
                   />
@@ -135,7 +147,7 @@ export default function Home() {
                   </h3>
                   <div className="flex items-center justify-between">
                     <p className="font-medium text-slate-900">
-                      ￥{listing.price}（1泊）
+                      ￥{listing.price.toLocaleString()}（1泊）
                     </p>
                     <div className="flex items-center space-x-1">
                       <MapPin className="h-4 w-4 text-slate-400" />
@@ -145,22 +157,25 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
+              // ▲▲▲ ここまで変更 ▲▲▲
             ))}
+            {/* ▲▲▲ 変更点3 ここまで ▲▲▲ */}
           </div>
 
           <div className="mt-12 text-center">
+            {/* このボタンのリンク先は次のステップで修正します */}
             <Button
               asChild
               className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm"
             >
-              <Link href="/#">すべての掲載を見る</Link>
+              <Link href="/listings">すべての掲載を見る</Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* How It Works (変更なし) */}
       <section className="py-24 bg-gray-50" id="how-it-works">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16">
@@ -190,8 +205,11 @@ export default function Home() {
           </div>
 
           <div className="mt-16 text-center">
-            <Button className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm">
-              今すぐ始める
+            <Button
+              asChild
+              className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm"
+            >
+              <Link href="#get-started">今すぐ始める</Link>
             </Button>
           </div>
         </div>
