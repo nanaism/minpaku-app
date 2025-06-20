@@ -11,6 +11,8 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 /**
  * すべてのリスティングを表示するページ
  */
@@ -66,10 +68,7 @@ export default async function ListingsPage() {
                       <Image
                         fill
                         // 画像がない場合を考慮
-                        src={
-                          (listing).listing_images?.[0]?.url ||
-                          "/shibuya.jpg"
-                        }
+                        src={listing.listing_images?.[0]?.url || "/shibuya.jpg"}
                         alt={listing.title}
                         className="object-cover transition-transform group-hover:scale-105"
                       />

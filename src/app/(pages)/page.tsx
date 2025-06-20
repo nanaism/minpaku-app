@@ -5,6 +5,8 @@ import Link from "next/link";
 // ▼▼▼ 変更点1: ダミーデータを削除し、データベースからデータを取得する関数をインポート ▼▼▼
 import { getFeaturedListings } from "@/lib/supabase/database/listings";
 
+export const dynamic = "force-dynamic";
+
 // How it works セクションのステップを定義（変更なし）
 const howItWorksSteps = [
   {

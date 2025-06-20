@@ -22,17 +22,18 @@ import { BookingSuccess } from "./_components/booking-success";
 export const dynamic = "force-dynamic";
 
 interface ListingDetailPageProps {
-  // ▼▼▼ 引数の型定義を修正 ▼▼▼
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>; // searchParams も Promise でラップ
 }
 
 export default async function ListingDetailPage({
   params,
-  searchParams, // searchParams を受け取る
+  searchParams: searchParamsPromise, // 変数名を変更して、Promiseであることを明確にする
 }: ListingDetailPageProps) {
   // ▲▲▲ 引数の型定義を修正 ▲▲▲
-  const { id } = params; // paramsのPromiseを解決する必要がなくなる
+  const { id } = await params;
+
+  const searchParams = await searchParamsPromise;
 
   const { listing, images } = await getListingById(id);
   if (!listing) {
