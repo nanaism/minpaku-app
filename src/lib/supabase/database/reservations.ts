@@ -252,3 +252,52 @@ export const cancelReservation = async (reservationId: string) => {
 
   return true;
 };
+
+// ▼▼▼ ここから追加 ▼▼▼
+/**
+ * 予約を削除（キャンセル）する
+ *
+ * @param reservationId 削除する予約のID
+ * @param userId 操作を行うユーザーのID（セキュリティのため）
+ * @returns 削除が成功したかどうか
+ */
+export const deleteReservation = async (
+  reservationId: string,
+  userId: string
+): Promise<boolean> => {
+  const supabase = await createServerClient();
+
+  // セキュリティチェック：指定された予約が本当にこのユーザーのものであるか確認
+  const { data: existingReservation, error: fetchError } = await supabase
+    .from("reservations")
+    .select("id, user_id")
+    .eq("id", reservationId)
+    .single();
+
+  if (fetchError || !existingReservation) {
+    console.error(
+      "Error fetching reservation for deletion or not found:",
+      fetchError?.message
+    );
+    throw new Error("指定された予約が見つかりません。");
+  }
+
+  if (existingReservation.user_id !== userId) {
+    console.error("User mismatch on reservation deletion attempt.");
+    throw new Error("この予約をキャンセルする権限がありません。");
+  }
+
+  // 予約を削除
+  const { error: deleteError } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", reservationId);
+
+  if (deleteError) {
+    console.error("Error deleting reservation:", deleteError.message);
+    throw new Error("予約のキャンセル処理中にエラーが発生しました。");
+  }
+
+  return true;
+};
+// ▲▲▲ ここまで追加 ▲▲▲

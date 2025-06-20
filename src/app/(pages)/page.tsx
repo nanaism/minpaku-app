@@ -59,7 +59,7 @@ export default async function Home() {
                     asChild
                     className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm"
                   >
-                    <Link href="#get-started">今すぐ始める</Link>
+                    <Link href="/listings">今すぐ始める</Link>
                   </Button>
                   <Button
                     asChild
@@ -209,7 +209,7 @@ export default async function Home() {
               asChild
               className="rounded-full bg-emerald-500 text-white px-8 py-6 text-lg hover:bg-emerald-600 shadow-sm"
             >
-              <Link href="#get-started">今すぐ始める</Link>
+              <Link href="/listings">今すぐ始める</Link>
             </Button>
           </div>
         </div>
