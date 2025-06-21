@@ -67,7 +67,7 @@ export default async function Home() {
                     asChild
                     className="rounded-full bg-white text-emerald-500 border border-emerald-500 px-8 py-6 text-lg hover:bg-emerald-50 shadow-sm"
                   >
-                    <Link href="/listings">詳しく見る</Link>
+                    <Link href="#how-it-works">詳しく見る</Link>
                   </Button>
                 </div>
               </div>

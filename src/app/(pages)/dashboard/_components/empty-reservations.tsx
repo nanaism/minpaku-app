@@ -31,7 +31,7 @@ export default function EmptyReservations({ type }: EmptyReservationsProps) {
               ? "新しい宿泊施設を探して予約しましょう"
               : "最初の宿泊施設を予約しましょう"}
           </p>
-          <Link href="/">
+          <Link href="/listings">
             <Button className="bg-emerald-500 hover:bg-emerald-600 text-white">
               宿泊施設を探す
             </Button>
