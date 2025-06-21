@@ -1,5 +1,6 @@
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
+import { jaJP } from "@clerk/localizations"; // 日本語化のためにインポート
 import { ClerkProvider } from "@clerk/nextjs";
 import { type Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -26,13 +27,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={jaJP}>
       <html lang="ja">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Header />
-          {children}
+          <main> {children}</main>
           <Toaster richColors />
           <footer className="bg-gray-900 px-4 md:px-6 py-8">
             <p className="text-sm text-slate-300 text-center">
