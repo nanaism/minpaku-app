@@ -39,7 +39,7 @@ export default async function ListingsPage() {
             すべての掲載
           </h1>
           <p className="mt-4 text-lg text-slate-600">
-            あなたの旅を彩る、ユニークな宿泊先を見つけましょう。
+            旅を彩る、ユニークな宿泊先を見つけよう。
           </p>
         </div>
 

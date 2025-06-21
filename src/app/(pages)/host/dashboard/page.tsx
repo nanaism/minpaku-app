@@ -7,6 +7,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { format } from "date-fns";
 import { BarChart, Plus } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import HostDashboardContent from "./_components/host-dashboard-content";
 import HostDashboardHeader from "./_components/host-dashboard-header";
 
@@ -15,7 +16,7 @@ export default async function HostDashboardPage() {
   const user = await currentUser();
 
   if (!user) {
-    return <div>ログインが必要です。</div>;
+    redirect("/sign-in");
   }
 
   // ホストプロフィール情報を構築
