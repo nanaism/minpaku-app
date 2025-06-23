@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![FireShot Webpage Capture 021 - 'Yadori - 民泊アプリ' - yadori aiichiro jp](https://github.com/user-attachments/assets/1d2ef327-87f1-4d4d-80e7-91eeb4f0a4ea)
 
-## Getting Started
+# 必須機能
+- LP（ランディングページ）：
+- アプリの概要を知ることができるトップページ
+- 実際の宿泊施設表示
+- ユーザー登録：
+- 安全なユーザー登録・認証
+- 宿泊施設の管理：
+- 物件情報（タイプ、設備、料金、写真）の登録・編集
+- 宿泊施設情報の閲覧：
+- 写真、設備、料金などの詳細表示
+- 予約状況の確認
+- 予約システム：
+- 希望日程の選択と予約処理
+- ユーザー向けダッシュボード：
+- 予約内容・履歴の確認
+- ホスト向けダッシュボード：
+- 登録物件の管理
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# ユーザーストーリー
+- ゲスト（利用者）
+ - ユーザーがサイトにアクセスすると、宿泊施設の一覧が表示される。
+ - 物件詳細ページには、写真、設備、料金などの情報が表示される。
+ - ユーザーは物件の空き状況を確認し、希望の日程を予約できる。
+ - ユーザーは自分の予約内容と履歴をダッシュボードで確認できる。
+- ホスト（提供者）
+ - ユーザーは登録・ログインして、ホストとして自分の物件を登録できる。
+ - ホストは物件のタイプを選択できる（一軒家、マンション、個室など）。
+ - ホストは宿泊料金を設定できる。
+ - ホストは物件の写真をアップロードできる。
+ - ホストは登録した物件情報をダッシュボードで管理できる。
